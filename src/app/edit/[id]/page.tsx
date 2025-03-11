@@ -19,7 +19,6 @@ const EditPage = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<string>("");
-  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
@@ -33,8 +32,6 @@ const EditPage = () => {
         router.push("/login");
         return;
       }
-
-      setUserEmail(user.email);
 
       const blog = storedBlogs[Number(id)];
       if (blog) {
