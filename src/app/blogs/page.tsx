@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image"; 
+import Image from "next/image";
 
 interface Blog {
   title: string;
@@ -31,7 +31,7 @@ const BlogsPage = () => {
         setUserEmail(user.email);
       }
     }
-  }, []);
+  }, [router]); // ✅ Memasukkan router sebagai dependency
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -60,7 +60,8 @@ const BlogsPage = () => {
           {userEmail && (
             <button
               onClick={handleLogout}
-              className="bg-red-500 px-3 py-1 rounded-md hover:bg-red-600 transition">
+              className="bg-red-500 px-3 py-1 rounded-md hover:bg-red-600 transition"
+            >
               Logout
             </button>
           )}

@@ -2,49 +2,62 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
-import Image from "next/image"; 
+import Image from "next/image";
+
+interface Blog {
+  title: string;
+  description: string;
+  email: string;
+  date: string;
+  image?: string;
+}
 
 const EditPage = () => {
   const router = useRouter();
   const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id; 
+  const id = Array.isArray(params.id) ? params.id[0] : params.id;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState<string>(""); 
+  const [image, setImage] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [blogs, setBlogs] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
 
   useEffect(() => {
     if (typeof window !== "undefined" && id) {
-      const storedBlogs = JSON.parse(localStorage.getItem("blogs") || "[]");
+      const storedBlogs: Blog[] = JSON.parse(localStorage.getItem("blogs") || "[]");
       setBlogs(storedBlogs);
 
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+
       if (!user.email) {
         router.push("/login");
-      } else {
-        setUserEmail(user.email);
+        return;
       }
 
-      if (storedBlogs[Number(id)]) {
-        setTitle(storedBlogs[Number(id)].title);
-        setDescription(storedBlogs[Number(id)].description);
-        setImage(storedBlogs[Number(id)].image || ""); 
+      setUserEmail(user.email);
 
-        if (storedBlogs[Number(id)].email !== user.email) {
+      const blog = storedBlogs[Number(id)];
+      if (blog) {
+        setTitle(blog.title);
+        setDescription(blog.description);
+        setImage(blog.image || "");
+
+        if (blog.email !== user.email) {
           alert("You are not authorized to edit this blog!");
           router.push("/");
         }
+      } else {
+        router.push("/blogs");
       }
     }
-  }, [id]);
+  }, [id, router]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImage(reader.result as string); // Simpan URL gambar sementara
+        setImage(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
@@ -52,11 +65,11 @@ const EditPage = () => {
 
   const handleUpdate = () => {
     const updatedBlogs = [...blogs];
-    updatedBlogs[Number(id)] = { 
-      ...updatedBlogs[Number(id)], 
-      title, 
-      description, 
-      image, 
+    updatedBlogs[Number(id)] = {
+      ...updatedBlogs[Number(id)],
+      title,
+      description,
+      image,
     };
     localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
     router.push("/blogs");
@@ -82,7 +95,6 @@ const EditPage = () => {
           rows={5}
         />
 
-        
         {image && (
           <div className="mt-4">
             <p className="text-sm font-medium">Current Image:</p>
@@ -98,7 +110,6 @@ const EditPage = () => {
           </div>
         )}
 
-        
         <label className="block mt-4 text-sm font-medium">Update Image</label>
         <input type="file" accept="image/*" onChange={handleImageChange} className="w-full p-2 border rounded-md" />
 
