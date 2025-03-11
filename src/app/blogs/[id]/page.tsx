@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image"; // Import next/image
 
 interface Blog {
   title: string;
@@ -45,12 +46,16 @@ const BlogDetail = () => {
         <p className="text-sm text-gray-500 mb-4">By {blog.email} - {blog.date}</p>
         <p className="text-gray-700 leading-relaxed mb-4">{blog.description}</p>
 
-        {/* Tampilkan gambar di bawah teks */}
-        <img
-          src={blog.image || "/default-thumbnail.jpg"}
-          alt="Blog Image"
-          className="w-full h-auto max-h-[400px] object-contain rounded-md"
-        />
+        {/* Gambar di bawah teks menggunakan Next.js Image */}
+        <div className="relative w-full h-[400px]">
+          <Image
+            src={blog.image || "/default-thumbnail.jpg"}
+            alt="Blog Image"
+            layout="fill"
+            objectFit="contain"
+            className="rounded-md"
+          />
+        </div>
       </div>
     </div>
   );

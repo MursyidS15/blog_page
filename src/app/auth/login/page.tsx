@@ -4,7 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Backendless from "backendless";
 
-Backendless.initApp("1EF12296-BF73-45D5-BAA4-089AE6D1CF2F", "D1DE0EEF-F2D8-4E6B-BD55-362FD56DE0A7"); // Ganti dengan kredensial Backendless kamu
+Backendless.initApp(
+  "1EF12296-BF73-45D5-BAA4-089AE6D1CF2F",
+  "D1DE0EEF-F2D8-4E6B-BD55-362FD56DE0A7"
+); // Ganti dengan kredensial Backendless kamu
+
+interface BackendlessError {
+  message?: string;
+}
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +22,7 @@ const Login = () => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
-      router.push("../blogs");
+      router.push("/blogs");
     }
   }, [router]);
 
@@ -24,12 +31,17 @@ const Login = () => {
     setError(null);
 
     try {
-      await Backendless.UserService.logout(); // Logout user di perangkat lain sebelum login baru
+      const currentUser = await Backendless.UserService.getCurrentUser();
+      if (currentUser) {
+        await Backendless.UserService.logout();
+      }
+
       const user = await Backendless.UserService.login(email, password, true);
       localStorage.setItem("user", JSON.stringify(user));
-      router.push("../blogs");
-    } catch (err: any) {
-      setError(err.message || "Invalid email or password.");
+      router.push("/blogs");
+    } catch (err) {
+      const backendlessError = err as BackendlessError;
+      setError(backendlessError.message || "Invalid email or password.");
     }
   };
 

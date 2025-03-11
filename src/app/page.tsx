@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image"; // Import next/image
 
 interface BlogForm {
   title: string;
@@ -31,7 +32,7 @@ const BlogSpot = () => {
   const handleLogout = () => {
     localStorage.removeItem("user");
     setUserEmail(null);
-    router.push("./auth/login");
+    router.push("/auth/login");
   };
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +62,6 @@ const BlogSpot = () => {
       <nav className="bg-green-700 text-white p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">BlogSpot</h1>
         <div className="flex items-center space-x-4">
-          {/* <Link href="/blogs" className="hover:underline">View Blogs</Link> */}
           {userEmail ? (
             <>
               <span className="text-sm bg-white text-green-700 px-3 py-1 rounded-md">{userEmail}</span>
@@ -71,10 +71,10 @@ const BlogSpot = () => {
             </>
           ) : (
             <>
-              <Link href="./auth/login" className="bg-blue-500 px-3 py-1 rounded-md hover:bg-blue-600 transition">
+              <Link href="/auth/login" className="bg-blue-500 px-3 py-1 rounded-md hover:bg-blue-600 transition">
                 Login
               </Link>
-              <Link href="./auth/register" className="bg-gray-500 px-3 py-1 rounded-md hover:bg-gray-600 transition">
+              <Link href="/auth/register" className="bg-gray-500 px-3 py-1 rounded-md hover:bg-gray-600 transition">
                 Register
               </Link>
             </>
@@ -92,22 +92,50 @@ const BlogSpot = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block font-medium text-gray-700">Title</label>
-              <input type="text" {...register("title", { required: true })} className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500" />
+              <input
+                type="text"
+                {...register("title", { required: true })}
+                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500"
+              />
             </div>
             <div>
               <label className="block font-medium text-gray-700">Description</label>
-              <textarea {...register("description", { required: true })} className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500" rows={4} />
+              <textarea
+                {...register("description", { required: true })}
+                className="w-full p-2 border rounded-md focus:ring-2 focus:ring-green-500"
+                rows={4}
+              />
             </div>
             <div>
               <label className="block font-medium text-gray-700">Your Email</label>
-              <input type="email" value={userEmail || ""} disabled className="w-full p-2 border rounded-md bg-gray-100" />
+              <input
+                type="email"
+                value={userEmail || ""}
+                disabled
+                className="w-full p-2 border rounded-md bg-gray-100"
+              />
             </div>
             <div>
               <label className="block font-medium text-gray-700">Upload Image</label>
               <input type="file" accept="image/*" onChange={handleImageChange} className="w-full p-2 border rounded-md" />
-              {imagePreview && <img src={imagePreview} alt="Preview" className="mt-2 w-full h-48 object-cover rounded-md" />}
+              
+              {/* Gunakan next/image untuk preview gambar */}
+              {imagePreview && (
+                <div className="mt-2 relative w-full h-48">
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    layout="fill"
+                    objectFit="cover"
+                    className="rounded-md"
+                  />
+                </div>
+              )}
             </div>
-            <button type="submit" className="w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition">
+            <button
+              type="submit"
+              className="w-full bg-green-700 text-white py-2 rounded-md hover:bg-green-800 transition"
+            >
               Publish
             </button>
           </form>

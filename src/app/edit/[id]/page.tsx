@@ -2,19 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
+import Image from "next/image"; 
 
 const EditPage = () => {
   const router = useRouter();
   const params = useParams();
-  const id = Array.isArray(params.id) ? params.id[0] : params.id; // Pastikan `id` adalah string
+  const id = Array.isArray(params.id) ? params.id[0] : params.id; 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState<string>(""); // Tambahkan state untuk gambar
+  const [image, setImage] = useState<string>(""); 
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [blogs, setBlogs] = useState<any[]>([]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== "undefined" && id) {
       const storedBlogs = JSON.parse(localStorage.getItem("blogs") || "[]");
       setBlogs(storedBlogs);
 
@@ -25,10 +26,10 @@ const EditPage = () => {
         setUserEmail(user.email);
       }
 
-      if (id && storedBlogs[Number(id)]) {
+      if (storedBlogs[Number(id)]) {
         setTitle(storedBlogs[Number(id)].title);
         setDescription(storedBlogs[Number(id)].description);
-        setImage(storedBlogs[Number(id)].image || ""); // Set gambar jika ada
+        setImage(storedBlogs[Number(id)].image || ""); 
 
         if (storedBlogs[Number(id)].email !== user.email) {
           alert("You are not authorized to edit this blog!");
@@ -55,7 +56,7 @@ const EditPage = () => {
       ...updatedBlogs[Number(id)], 
       title, 
       description, 
-      image, // Simpan gambar baru
+      image, 
     };
     localStorage.setItem("blogs", JSON.stringify(updatedBlogs));
     router.push("/blogs");
@@ -81,15 +82,23 @@ const EditPage = () => {
           rows={5}
         />
 
-        {/* Preview gambar saat ini */}
+        
         {image && (
           <div className="mt-4">
             <p className="text-sm font-medium">Current Image:</p>
-            <img src={image} alt="Blog" className="w-full h-auto max-h-[300px] object-contain rounded-md" />
+            <div className="relative w-full h-[300px]">
+              <Image
+                src={image}
+                alt="Blog Image"
+                layout="fill"
+                objectFit="contain"
+                className="rounded-md"
+              />
+            </div>
           </div>
         )}
 
-        {/* Input untuk upload gambar baru */}
+        
         <label className="block mt-4 text-sm font-medium">Update Image</label>
         <input type="file" accept="image/*" onChange={handleImageChange} className="w-full p-2 border rounded-md" />
 

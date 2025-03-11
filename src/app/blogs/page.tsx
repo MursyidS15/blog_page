@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image"; 
 
 interface Blog {
   title: string;
@@ -51,7 +52,7 @@ const BlogsPage = () => {
       {/* Navbar */}
       <nav className="bg-green-700 text-white p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold">BlogSpot</h1>
-        <div className="flex items-center gap-4 ">
+        <div className="flex items-center gap-4">
           {userEmail && <span className="text-sm">{userEmail}</span>}
           <Link href="/" className="bg-blue-500 px-3 py-1 rounded-md hover:bg-blue-500 transition">
             Create Blog
@@ -80,12 +81,16 @@ const BlogsPage = () => {
                 <p className="text-gray-600">{blog.description.substring(0, 100)}...</p>
                 <p className="text-sm text-gray-500">By {blog.email} - {blog.date}</p>
 
-                {/* Gambar dipindahkan ke bawah teks */}
-                <img
-                  src={blog.image || "/default-thumbnail.jpg"}
-                  alt="Blog Image"
-                  className="w-full h-auto max-h-[300px] object-contain rounded-md mt-3"
-                />
+                {/* Gambar di bawah teks menggunakan Next.js Image */}
+                <div className="relative w-full h-[300px] mt-3">
+                  <Image
+                    src={blog.image || "/default-thumbnail.jpg"}
+                    alt="Blog Image"
+                    layout="fill"
+                    objectFit="contain"
+                    className="rounded-md"
+                  />
+                </div>
 
                 <div className="mt-3 flex gap-4">
                   <Link href={`/blogs/${index}`} className="text-green-700 font-semibold hover:underline">
